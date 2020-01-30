@@ -13,12 +13,12 @@ restart: clean start
 
 .PHONY: install
 install:
-	ansible-galaxy install -f -r requirements.yml
-	OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook playbook.yml
+	ansible-galaxy install -f -r ansible/requirements.yml
+	OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook ansible/playbook.yml
 
 .PHONY: debug
 debug:
-	OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook debug.yml
+	OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES ansible-playbook ansible/debug.yml
 
 .PHONY: clean
 clean:
