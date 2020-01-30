@@ -1,0 +1,11 @@
+---
+all:
+  hosts:
+    cluster-minio0:
+      ansible_connection: docker
+    cluster-minio1:
+      ansible_connection: docker
+    cluster-minio2:
+      ansible_connection: docker
+    cluster-minio3:
+      ansible_connection: docker

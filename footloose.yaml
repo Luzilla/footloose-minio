@@ -1,0 +1,16 @@
+cluster:
+  name: cluster
+  privateKey: ~/.ssh/id_rsa
+machines:
+- count: 4
+  spec:
+    backend: docker
+    image: quay.io/footloose/centos7:0.6.2
+    name: minio%d
+    networks:
+    - minio-cluster
+    portMappings:
+    - containerPort: 22
+      hostPort: 2222
+    - containerPort: 9000
+      hostPort: 9000
