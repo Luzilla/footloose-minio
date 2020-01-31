@@ -1,0 +1,32 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Check systemd minio status
+      command: systemctl status minio
+      register: minio_status
+      failed_when: not (minio_status.stdout_lines | select("match", "4 Online, 0 Offline."))
+
+- hosts: localhost
+  vars:
+    minio_access_key: foo
+    minio_secret_key: barbarbar
+  tasks:
+    - name: Check prometheus status [from the host]
+      uri:
+        url: "http://127.0.0.1:{{ item }}/minio/prometheus/metrics"
+        status_code: 200
+      with_items:
+        - 9002
+        - 9004
+        - 9006
+        - 9008
+    - name: Setup mc for Minio Hosts
+      command: "mc config host add footloose-{{ item.name }} http://127.0.0.1:{{ item.port }} {{ minio_access_key }} {{ minio_secret_key }}"
+      ignore_errors: yes
+      with_items:
+        - { name: 'haproxy', port: 8080 }
+        - { name: 'minio0-0', port: 9002 }
+        - { name: 'minio1-0', port: 9004 }
+        - { name: 'minio2-0', port: 9006 }
+        - { name: 'minio3-0', port: 9008 }

@@ -1,0 +1,23 @@
+---
+all:
+  hosts:
+    cluster-haproxy0:
+      ansible_connection: docker
+    cluster-minio-0-0:
+      ansible_connection: docker
+    cluster-minio-1-0:
+      ansible_connection: docker
+    cluster-minio-2-0:
+      ansible_connection: docker
+    cluster-minio-3-0:
+      ansible_connection: docker
+  children:
+    haproxy:
+      hosts:
+        cluster-haproxy0:
+    minio:
+      hosts:
+        cluster-minio-0-0:
+        cluster-minio-1-0:
+        cluster-minio-2-0:
+        cluster-minio-3-0:
