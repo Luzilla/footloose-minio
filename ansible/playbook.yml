@@ -1,5 +1,27 @@
 ---
-- hosts: all
+- hosts: haproxy
+  roles:
+    - name: unxnn.haproxy
+      vars:
+        haproxy_frontend_name: 'minio_in'
+        haproxy_frontend_bind_address: '*'
+        haproxy_frontend_port: 80
+        haproxy_frontend_mode: 'http'
+        haproxy_backend_name: 'minio_cluster'
+        haproxy_backend_mode: 'http'
+        haproxy_backend_balance_method: 'roundrobin'
+        haproxy_backend_httpchk: 'HEAD /minio/prometheus/metrics HTTP/1.1\r\nHost:localhost'
+        haproxy_backend_servers:
+          - name: minio-0-0
+            address: minio-0-0:9000
+          - name: minio-1-0
+            address: minio-1-0:9000
+          - name: minio-2-0
+            address: minio-2-0:9000
+          - name: minio-3-0
+            address: minio-3-0:9000
+
+- hosts: minio
   roles:
     - name: atosatto.minio
       vars:
@@ -9,5 +31,6 @@
         minio_server_env_extra: "MINIO_PROMETHEUS_AUTH_TYPE=public"
         minio_server_datadirs:
           - /minio-data
+        minio_server_make_datadirs: true
         minio_server_cluster_nodes:
-          - http://minio{0...3}/minio-data
+          - http://minio-{0...3}-0/minio-data

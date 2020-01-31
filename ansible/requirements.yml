@@ -1,4 +1,5 @@
 ---
+- src: unxnn.haproxy
 - version: fix-startup
   src: git+https://github.com/pngmbh/ansible-minio.git
   name: atosatto.minio

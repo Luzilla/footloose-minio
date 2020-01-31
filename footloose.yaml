@@ -1,16 +1,78 @@
+x-ref:
+  default_spec: &spec
+    backend: docker
+    image: quay.io/footloose/centos7:0.6.3
+    networks:
+    - minio-cluster
+  volume_minio_0: &volume0
+    volumes:
+    - type: bind
+      source: /Users/till/Documents/workspaces/luzilla/footloose-minio/minio-data0
+      destination: /minio-data
+  volume_minio_1: &volume1
+    volumes:
+    - type: bind
+      source: /Users/till/Documents/workspaces/luzilla/footloose-minio/minio-data1
+      destination: /minio-data
+  volume_minio_2: &volume2
+    volumes:
+    - type: bind
+      source: /Users/till/Documents/workspaces/luzilla/footloose-minio/minio-data2
+      destination: /minio-data
+  volume_minio_3: &volume3
+    volumes:
+    - type: bind
+      source: /Users/till/Documents/workspaces/luzilla/footloose-minio/minio-data3
+      destination: /minio-data
+
 cluster:
   name: cluster
   privateKey: ~/.ssh/id_rsa
 machines:
-- count: 4
+# this is haproxy
+- count: 1
   spec:
-    backend: docker
-    image: quay.io/footloose/centos7:0.6.2
-    name: minio%d
-    networks:
-    - minio-cluster
+    <<: *spec
+    name: haproxy%d
+    portMappings:
+    - containerPort: 22
+      hostPort: 2220
+    - containerPort: 80
+      hostPort: 8080
+# this is minio
+- count: 1
+  spec:
+    <<: *spec
+    name: minio-0-%d
+    portMappings:
+    - containerPort: 22
+      hostPort: 2221
+    - containerPort: 9000
+      hostPort: 9001
+- count: 1
+  spec:
+    <<: *spec
+    name: minio-1-%d
     portMappings:
     - containerPort: 22
       hostPort: 2222
     - containerPort: 9000
-      hostPort: 9000
+      hostPort: 9002
+- count: 1
+  spec:
+    <<: *spec
+    name: minio-2-%d
+    portMappings:
+    - containerPort: 22
+      hostPort: 2223
+    - containerPort: 9000
+      hostPort: 9003
+- count: 1
+  spec:
+    <<: *spec
+    name: minio-3-%d
+    portMappings:
+    - containerPort: 22
+      hostPort: 2224
+    - containerPort: 9000
+      hostPort: 9004
